@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MotionScan Screening Record",
+  "type": "object",
+  "required": ["id", "district", "recorded_at_device"],
+  "properties": {
+    "id": { "type": "string", "description": "client-generated UUID" },
+    "patient_local_id": { "type": ["string", "null"] },
+    "age": { "type": ["integer", "null"] },
+    "gender": { "type": ["string", "null"] },
+    "village": { "type": ["string", "null"] },
+    "district": { "type": "string" },
+    "occupation": { "type": ["string", "null"] },
+    "red_flag_triggered": { "type": "integer", "enum": [0, 1] },
+    "red_flag_reason": { "type": ["string", "null"] },
+    "camera_quality_good": { "type": ["integer", "null"], "enum": [0, 1, null] },
+    "senseband_quality_good": { "type": ["integer", "null"], "enum": [0, 1, null] },
+    "trials_consistent": { "type": ["integer", "null"], "enum": [0, 1, null] },
+    "screening_probability": { "type": ["number", "null"] },
+    "screening_category": { "type": ["string", "null"], "enum": ["LOW", "REVIEW", "HIGH", null] },
+    "shap_top_factors": { "type": ["string", "null"], "description": "JSON-stringified array" },
+    "model_version": { "type": ["string", "null"] },
+    "esanjeevani_handoff_initiated": { "type": "integer", "enum": [0, 1] },
+    "esanjeevani_handoff_completed": { "type": "integer", "enum": [0, 1] },
+    "asha_worker_id": { "type": ["string", "null"] },
+    "recorded_at_device": { "type": "string", "format": "date-time" }
+  }
+}
