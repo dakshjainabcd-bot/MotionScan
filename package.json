@@ -1,0 +1,22 @@
+{
+  "name": "motionscan",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:field": "npm run dev --workspace=apps/field-app",
+    "dev:dashboard": "npm run dev --workspace=apps/dashboard",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:all": "concurrently -n FIELD,DASH,BACKEND -c blue,green,yellow \"npm run dev:field\" \"npm run dev:dashboard\" \"npm run dev:backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
