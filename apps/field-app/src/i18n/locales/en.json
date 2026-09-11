@@ -1,0 +1,27 @@
+{
+  "app": {
+    "title": "MotionScan"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "Hindi",
+    "as": "Assamese"
+  },
+  "patientReg": {
+    "title": "Patient Registration",
+    "name": "Patient name",
+    "age": "Age",
+    "gender": "Gender",
+    "genderOptions": {
+      "female": "Female",
+      "male": "Male",
+      "other": "Other"
+    },
+    "village": "Village",
+    "district": "District",
+    "occupation": "Occupation",
+    "patientLocalId": "Patient ID / reference (optional)",
+    "continue": "Continue"
+  }
+}

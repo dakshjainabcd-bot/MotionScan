@@ -1,0 +1,27 @@
+{
+  "app": {
+    "title": "मोशनस्कैन"
+  },
+  "language": {
+    "label": "भाषा",
+    "en": "अंग्रेज़ी",
+    "hi": "हिंदी",
+    "as": "असमिया"
+  },
+  "patientReg": {
+    "title": "रोगी पंजीकरण",
+    "name": "रोगी का नाम",
+    "age": "उम्र",
+    "gender": "लिंग",
+    "genderOptions": {
+      "female": "महिला",
+      "male": "पुरुष",
+      "other": "अन्य"
+    },
+    "village": "गांव",
+    "district": "ज़िला",
+    "occupation": "व्यवसाय",
+    "patientLocalId": "रोगी संदर्भ आईडी (वैकल्पिक)",
+    "continue": "आगे बढ़ें"
+  }
+}

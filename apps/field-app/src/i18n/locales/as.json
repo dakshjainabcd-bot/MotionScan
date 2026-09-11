@@ -1,0 +1,27 @@
+{
+  "app": {
+    "title": "মোশ্যনস্কেন"
+  },
+  "language": {
+    "label": "ভাষা",
+    "en": "ইংৰাজী",
+    "hi": "হিন্দী",
+    "as": "অসমীয়া"
+  },
+  "patientReg": {
+    "title": "ৰোগীৰ পঞ্জীয়ন",
+    "name": "ৰোগীৰ নাম",
+    "age": "বয়স",
+    "gender": "লিংগ",
+    "genderOptions": {
+      "female": "মহিলা",
+      "male": "পুৰুষ",
+      "other": "অন্য"
+    },
+    "village": "গাঁও",
+    "district": "জিলা",
+    "occupation": "বৃত্তি",
+    "patientLocalId": "ৰোগীৰ প্ৰসংগ আইডি (বৈকল্পিক)",
+    "continue": "আগবাঢ়ক"
+  }
+}
