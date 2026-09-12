@@ -15,6 +15,11 @@ export function PatientSessionProvider({ children }) {
     redFlagReason: null,
     guidedSetupComplete: false,
     gaitFeatures: null,
+    // ── Phase 7 additions ──
+    womacResponses: {},
+    womacSubscores: null,
+    riskFactors: null,
+    bmi: null,
   });
 
   return (

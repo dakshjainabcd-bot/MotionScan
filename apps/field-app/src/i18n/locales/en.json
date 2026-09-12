@@ -23,5 +23,54 @@
     "occupation": "Occupation",
     "patientLocalId": "Patient ID / reference (optional)",
     "continue": "Continue"
+  },
+  "womac": {
+    "title": "Pain & Function Questionnaire",
+    "subtitle": "Ask the patient how much difficulty or pain each activity causes.",
+    "progress": "Question {{current}} of {{total}}",
+    "items": {
+      "pain_walking": "Pain when walking on flat ground",
+      "pain_slopes": "Pain when climbing slopes or hills",
+      "pain_night": "Pain at night while in bed",
+      "stiffness_morning": "Stiffness right after waking up",
+      "stiffness_later": "Stiffness later in the day after sitting or resting",
+      "function_market": "Difficulty going to the market or collecting water",
+      "function_transport": "Difficulty getting on or off an auto-rickshaw or boat",
+      "function_squatting": "Difficulty squatting"
+    }
+  },
+  "scale": {
+    "none": "None",
+    "mild": "Mild",
+    "moderate": "Moderate",
+    "severe": "Severe",
+    "extreme": "Extreme"
+  },
+  "riskFactors": {
+    "title": "Risk Factors",
+    "subtitle": "A few more details to complete the screening.",
+    "height": "Height (cm)",
+    "weight": "Weight (kg)",
+    "bmi": "BMI",
+    "occupation": "Occupation type",
+    "occupationOptions": {
+      "jhum_farming": "Jhum / shifting cultivation",
+      "manual_labor": "Manual labour",
+      "desk_work": "Desk work",
+      "other": "Other"
+    },
+    "terrain": "Terrain of residence",
+    "terrainOptions": {
+      "hilly": "Hilly",
+      "flat": "Flat"
+    },
+    "previousInjury": "Previous knee injury?",
+    "crepitus": "Crepitus present? (worker-observed — a grinding or popping felt on knee movement)",
+    "morningStiffness": "Morning stiffness lasts more than 30 minutes?",
+    "familyHistory": "Family history of osteoarthritis?",
+    "yes": "Yes",
+    "no": "No",
+    "continue": "Continue",
+    "back": "Back"
   }
 }
