@@ -4,6 +4,7 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 import PatientRegistration from './pages/PatientRegistration';
 import SafetyScreen from './pages/SafetyScreen';
 import GuidedSetup from './pages/GuidedSetup';
+import WalkTest from './pages/WalkTest';
 import ReferralOnly from './pages/ReferralOnly';
 
 export default function App() {
@@ -15,8 +16,8 @@ export default function App() {
           <Route path="/" element={<PatientRegistration />} />
           <Route path="/safety-screen" element={<SafetyScreen />} />
           <Route path="/guided-setup" element={<GuidedSetup />} />
+          <Route path="/walk-test" element={<WalkTest />} />
           <Route path="/referral-only" element={<ReferralOnly />} />
-          {/* /walk-test, /womac, /result are added in later phases */}
         </Routes>
       </BrowserRouter>
     </PatientSessionProvider>

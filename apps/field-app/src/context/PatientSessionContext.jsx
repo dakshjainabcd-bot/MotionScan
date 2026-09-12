@@ -1,11 +1,10 @@
-import { createContext, useContext, useState } from 'react';
-
-const PatientSessionContext = createContext(null);
+import { useState } from 'react';
+import { PatientSessionContext } from './sessionContext';
 
 export function PatientSessionProvider({ children }) {
   const [session, setSession] = useState({
-    id: null,               // client-generated UUID, set at registration
-    patientLocalId: null,   // optional non-identifying reference (maps to backend's patient_local_id)
+    id: null,
+    patientLocalId: null,
     name: null,
     age: null,
     gender: null,
@@ -14,6 +13,8 @@ export function PatientSessionProvider({ children }) {
     occupation: null,
     redFlagTriggered: null,
     redFlagReason: null,
+    guidedSetupComplete: false,
+    gaitFeatures: null,
   });
 
   return (
@@ -21,10 +22,4 @@ export function PatientSessionProvider({ children }) {
       {children}
     </PatientSessionContext.Provider>
   );
-}
-
-export function usePatientSession() {
-  const ctx = useContext(PatientSessionContext);
-  if (!ctx) throw new Error('usePatientSession must be used inside PatientSessionProvider');
-  return ctx;
 }

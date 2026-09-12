@@ -1,64 +1,138 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import CameraPreview from '../components/CameraPreview';
+import SkeletonOverlay from '../components/SkeletonOverlay';
 import ChecklistItem from '../components/ChecklistItem';
-import { usePatientSession } from '../context/PatientSessionContext';
-
-// Real automated pass/fail checks (full body visible, side-view orientation,
-// distance, lighting) are wired in Phase 4 using MediaPipe. This phase builds
-// the UI shell + live camera preview + a static checklist only, per the plan.
-const CHECKLIST_ITEMS = [
-  { id: 'fullBody', label: 'Full body visible in frame' },
-  { id: 'sideView', label: 'Camera positioned for a side view' },
-  { id: 'distance', label: 'Correct distance from camera' },
-  { id: 'lighting', label: 'Adequate lighting' },
-  { id: 'stationary', label: 'Camera is stationary' },
-];
+import { getPoseLandmarker, detectFrame } from '../lib/mediapipe/poseLandmarker';
+import { runAllQualityChecks } from '../lib/mediapipe/qualityChecks';
+import { usePatientSession } from '../context/usePatientSession';
 
 export default function GuidedSetup() {
+  const cameraRef = useRef(null);
+  const hiddenCanvasRef = useRef(document.createElement('canvas'));
+  const prevLandmarksRef = useRef(null);
+  const landmarkerRef = useRef(null);
+
+  const [landmarks, setLandmarks] = useState(null);
+  const [videoDims, setVideoDims] = useState({ width: 320, height: 240 });
   const [cameraError, setCameraError] = useState(null);
+  const [result, setResult] = useState({ checks: [], allPass: false, activeInstruction: null });
+  const [modelLoading, setModelLoading] = useState(true);
+
   const navigate = useNavigate();
-  const { session } = usePatientSession();
+  const { session, setSession } = usePatientSession();
+
+  useEffect(() => {
+    getPoseLandmarker().then((lm) => {
+      landmarkerRef.current = lm;
+      setModelLoading(false);
+    });
+  }, []);
+
+  const handleFrame = useCallback((videoEl) => {
+    if (!landmarkerRef.current) return;
+
+    // Safe here — this runs inside a callback, not during render.
+    if (
+      videoEl.videoWidth &&
+      videoEl.videoHeight &&
+      (videoEl.videoWidth !== videoDims.width || videoEl.videoHeight !== videoDims.height)
+    ) {
+      setVideoDims({ width: videoEl.videoWidth, height: videoEl.videoHeight });
+    }
+
+    const detection = detectFrame(landmarkerRef.current, videoEl, performance.now());
+    const currentLandmarks = detection?.landmarks?.[0] ?? null;
+
+    const canvas = hiddenCanvasRef.current;
+    canvas.width = videoEl.videoWidth || 320;
+    canvas.height = videoEl.videoHeight || 240;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+    const qualityResult = runAllQualityChecks({
+      landmarks: currentLandmarks,
+      prevLandmarks: prevLandmarksRef.current,
+      canvasCtx: ctx,
+      width: canvas.width,
+      height: canvas.height,
+    });
+
+    prevLandmarksRef.current = currentLandmarks;
+    setLandmarks(currentLandmarks);
+    setResult(qualityResult);
+  }, [videoDims]);
+
+  const handleContinue = () => {
+    setSession((prev) => ({ ...prev, guidedSetupComplete: true }));
+    navigate('/walk-test');
+  };
 
   return (
-    <div className="p-4 max-w-lg mx-auto text-left">
-      <h1 className="text-xl font-semibold mb-2">Guided Camera Setup</h1>
-      <p className="text-sm text-gray-600 mb-4">
-        Position the phone so the patient's full body is visible from the side.
-      </p>
+    <div className="max-w-lg mx-auto px-5 pt-8 pb-10 flex flex-col gap-5">
+      <header>
+        <h1 className="text-[22px] font-semibold tracking-[-0.3px] text-ink dark:text-ink-dark mb-1">
+          Position the patient
+        </h1>
+        <p className="text-sm text-ink-muted dark:text-ink-dark-muted">
+          Stand the patient side-on, about 3 metres from the camera.
+        </p>
+      </header>
 
-      <CameraPreview onError={setCameraError} />
+      <div className="relative">
+        <CameraPreview ref={cameraRef} onError={setCameraError} onFrame={handleFrame}>
+          <SkeletonOverlay
+            landmarks={landmarks}
+            width={videoDims.width}
+            height={videoDims.height}
+            quality={result.allPass ? 'good' : 'warn'}
+          />
+        </CameraPreview>
+
+        <AnimatePresence>
+          {result.activeInstruction && !modelLoading && (
+            <motion.div
+              className="absolute left-1/2 bottom-4 -translate-x-1/2 bg-black/80 text-white text-[13px] px-4 py-2.5 rounded-full backdrop-blur-md whitespace-nowrap max-w-[90%] overflow-hidden text-ellipsis"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {result.activeInstruction}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {cameraError && (
-        <p className="text-red-600 text-sm mt-2">
+        <p className="text-state-bad text-sm">
           Camera access failed: {cameraError}. Check browser permissions and try again.
         </p>
       )}
 
-      <div className="mt-4 space-y-2">
-        {CHECKLIST_ITEMS.map((item) => (
-          <ChecklistItem key={item.id} label={item.label} status="pending" />
-        ))}
+      <div className="bg-white dark:bg-surface-dark-raised border border-border dark:border-border-dark rounded-ms px-4.5 py-3 shadow-ms-sm">
+        {modelLoading ? (
+          <p className="text-ink-muted text-sm">Loading pose model…</p>
+        ) : (
+          result.checks.map((c) => (
+            <ChecklistItem key={c.id} label={c.label} status={c.pass ? 'pass' : 'fail'} />
+          ))
+        )}
       </div>
 
-      <p className="text-xs text-gray-500 mt-4">
-        Automated pass/fail checks for each item above are wired in Module 1A
-        (next phase). For now this screen confirms the live camera preview works.
+      <p className="text-xs text-ink-faint">
+        Patient: <strong className="text-ink-muted">{session.name || '—'}</strong> · District:{' '}
+        <strong className="text-ink-muted">{session.district || '—'}</strong>
       </p>
-
-      <div className="mt-6 border-t pt-4 text-sm text-gray-600">
-        <p>
-          Patient: <strong>{session.name || '—'}</strong> · District:{' '}
-          <strong>{session.district || '—'}</strong>
-        </p>
-      </div>
 
       <button
         type="button"
-        onClick={() => navigate('/')}
-        className="w-full mt-4 py-3 rounded bg-gray-200 text-gray-800"
+        disabled={!result.allPass}
+        onClick={handleContinue}
+        className="w-full py-3.5 rounded-ms font-semibold text-[15px] text-white bg-brand disabled:bg-border-strong disabled:text-ink-faint active:scale-[0.98] transition-all"
       >
-        Back to Patient Registration
+        {result.allPass ? 'Start walking trial' : 'Waiting for good positioning…'}
       </button>
     </div>
   );

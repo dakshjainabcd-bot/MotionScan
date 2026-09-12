@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RED_FLAG_QUESTIONS } from '../data/redFlagQuestions';
-import { usePatientSession } from '../context/PatientSessionContext';
+import { usePatientSession } from '../context/usePatientSession';
 
 export default function SafetyScreen() {
   const [answers, setAnswers] = useState({});

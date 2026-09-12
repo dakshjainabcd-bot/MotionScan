@@ -1,4 +1,4 @@
-import { usePatientSession } from '../context/PatientSessionContext';
+import { usePatientSession } from '../context/usePatientSession';
 
 export default function ReferralOnly() {
   const { session } = usePatientSession();
